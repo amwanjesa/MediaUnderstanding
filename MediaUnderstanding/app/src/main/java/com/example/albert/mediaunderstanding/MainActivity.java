@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private String imageName = null;
     private static Uri fileUri = null;
     private static final int CAMERA_IMAGE_REQUEST = 1;
+    private Boolean correct;
+    public String imagePath;
+    private Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         File image = new File(imageFolderPath, imageName);
 
         fileUri = Uri.fromFile(image);
+        imagePath = imageFolderPath + File.separator + imageName;
         imageView.setTag(imageFolderPath + File.separator + imageName);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
@@ -90,23 +94,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("in activity", "succes");
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
-                Log.d("in switch speech", Integer.toString(RESULT_OK));
                 if (resultCode == RESULT_OK && null != data) {
 
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     voiceInput.setText(result.get(0));
+                    AnswerAsyncTask answerTask = new AnswerAsyncTask(this);
+                    answerTask.execute("http://145.109.62.84:9999/upload", bitmap);
                 }
                 break;
             }
 
             case CAMERA_IMAGE_REQUEST:
 
-                Bitmap bitmap = null;
+                bitmap = null;
                 try {
                     GetImageThumbnail getImageThumbnail = new GetImageThumbnail();
                     bitmap = getImageThumbnail.getThumbnail(fileUri, this);
@@ -141,5 +145,9 @@ public class MainActivity extends AppCompatActivity {
 
         return false;
 
+    }
+
+    public void setCorrect(Boolean answer){
+        correct = answer;
     }
 }
