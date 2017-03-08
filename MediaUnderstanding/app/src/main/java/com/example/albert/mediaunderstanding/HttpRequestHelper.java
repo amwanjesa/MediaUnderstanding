@@ -51,6 +51,7 @@ public class HttpRequestHelper {
                     }
 
                     Log.d("resulting tag", result);
+                    connection.disconnect();
                 }
                 else {
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));

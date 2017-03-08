@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     voiceInput.setText(result.get(0));
                     AnswerAsyncTask answerTask = new AnswerAsyncTask(this);
                     Log.d("url", fireImageUrl);
-                    answerTask.execute("http://145.109.44.162:9999/retrieve/" + fireImageUrl);
+                    answerTask.execute("http://145.109.44.162:9999/retrieve/" + result.get(0) + "/" + fireImageUrl);
                 }
                 break;
             }
