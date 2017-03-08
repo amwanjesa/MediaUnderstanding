@@ -1,14 +1,10 @@
 package com.example.albert.mediaunderstanding;
 
-import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -19,12 +15,13 @@ import java.net.URL;
  */
 public class HttpRequestHelper {
 
-    protected static synchronized String downloadFromServer(String urlString, Bitmap img) {
+    protected static synchronized String downloadFromServer(String urlString) {
         final String basicAuth = "Basic " + Base64.encodeToString("root:c199c52b8209ad0980fd861072fe8fa5".getBytes(), Base64.NO_WRAP);
-        Log.d("image", Integer.toString(img.getByteCount()));
         // declare return string result
         String result = "";
         // turn string into url
+        Log.d("urlString", urlString);
+
         URL url;
         try {
             url = new URL(urlString);
@@ -38,14 +35,8 @@ public class HttpRequestHelper {
             try {
                 // Open connection, set request method
                 connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("POST");
+                connection.setRequestMethod("GET");
                 connection.addRequestProperty("Authorization", basicAuth);
-                connection.setDoOutput(true);
-                connection.setFixedLengthStreamingMode(img.getByteCount());
-
-                OutputStream output = connection.getOutputStream();
-                img.compress(Bitmap.CompressFormat.JPEG, 50, output);
-                output.close();
 
                 int responseCode = connection.getResponseCode();
                 Log.d("response", Integer.toString(responseCode));
@@ -58,6 +49,8 @@ public class HttpRequestHelper {
                     while ((line = br.readLine()) != null) {
                         result = result + line;
                     }
+
+                    Log.d("resulting tag", result);
                 }
                 else {
                     BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream()));

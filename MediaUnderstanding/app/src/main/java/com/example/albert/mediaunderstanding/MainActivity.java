@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,14 +44,19 @@ public class MainActivity extends AppCompatActivity {
     private String imageName = null;
     private static Uri fileUri = null;
     private static final int CAMERA_IMAGE_REQUEST = 1;
-    private Boolean correct;
     public String imagePath;
     private Bitmap bitmap;
+    private StorageReference storageRef;
+    private StorageReference imageRef;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private String fireImageUrl;
+    private int baseUrlLength;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         storagePermitted(MainActivity.this);
+        baseUrlLength = getString(R.string.base_url).length();
         setContentView(R.layout.activity_main);
         voiceInput = (TextView) findViewById(R.id.speechText);
     }
@@ -92,6 +105,32 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void uploadToFirebase(){
+        storageRef = storage.getReference();
+        imageRef = storageRef.child(imageName + ".jpg");
+        StorageReference imagesChildRef = storageRef.child("images/" + imageName + "mountains.jpg");
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = imageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                fireImageUrl = downloadUrl.toString();
+                fireImageUrl = fireImageUrl.substring(baseUrlLength);
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -103,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     voiceInput.setText(result.get(0));
                     AnswerAsyncTask answerTask = new AnswerAsyncTask(this);
-                    answerTask.execute("http://145.109.62.84:9999/upload", bitmap);
+                    Log.d("url", fireImageUrl);
+                    answerTask.execute("http://145.109.44.162:9999/retrieve/" + fireImageUrl);
                 }
                 break;
             }
@@ -114,6 +154,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     GetImageThumbnail getImageThumbnail = new GetImageThumbnail();
                     bitmap = getImageThumbnail.getThumbnail(fileUri, this);
+                    uploadToFirebase();
                 } catch (FileNotFoundException e1) {
                     // TODO Auto-generated catch block
                     e1.printStackTrace();
@@ -145,9 +186,5 @@ public class MainActivity extends AppCompatActivity {
 
         return false;
 
-    }
-
-    public void setCorrect(Boolean answer){
-        correct = answer;
     }
 }

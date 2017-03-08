@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MediaUnderstanding</string>
+    <string name="base_url">https://firebasestorage.googleapis.com/v0/b/mediaunderstanding-7bb53.appspot.com/o/</string>
 </resources>

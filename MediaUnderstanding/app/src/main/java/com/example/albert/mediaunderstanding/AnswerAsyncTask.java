@@ -29,7 +29,7 @@ import java.util.ArrayList;
  * execution.
  */
 
-class AnswerAsyncTask extends AsyncTask<Object, Integer, String> {
+class AnswerAsyncTask extends AsyncTask<String, Integer, String> {
 
     Context context;
     MainActivity activity;
@@ -41,18 +41,8 @@ class AnswerAsyncTask extends AsyncTask<Object, Integer, String> {
     }
 
     @Override
-    protected String doInBackground(Object... params) {
-//        BitmapFactory.Options options = null;
-//        options = new BitmapFactory.Options();
-//        options.inSampleSize = 3;
-//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        Bitmap bitmap = (Bitmap) params[1];
-//        // Must compress the Image to reduce image size to make upload easy
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-//        byte[] byte_arr = stream.toByteArray();
-//        // Encode Image to String
-//        String encodedString = Base64.encodeToString(byte_arr, 0);
-        return HttpRequestHelper.downloadFromServer((String) params[0], (Bitmap) params[1]);
+    protected String doInBackground(String... params) {
+        return HttpRequestHelper.downloadFromServer(params[0]);
     }
 
     protected void onPreExecute() {
@@ -70,8 +60,8 @@ class AnswerAsyncTask extends AsyncTask<Object, Integer, String> {
         else {
             try {
                 JSONObject respObj = new JSONObject(result);
-                Boolean answer = respObj.getBoolean("answer");
-                this.activity.setCorrect(answer);
+                String label = respObj.getString("label");
+                JSONArray synonyms = respObj.getJSONArray("synomnyms");
             }catch (JSONException e) {
                 e.printStackTrace();
             }
