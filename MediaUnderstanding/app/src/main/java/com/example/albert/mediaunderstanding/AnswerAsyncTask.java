@@ -32,10 +32,10 @@ import java.util.ArrayList;
 class AnswerAsyncTask extends AsyncTask<String, Integer, String> {
 
     Context context;
-    MainActivity activity;
+    CameraActivity activity;
 
 
-    public AnswerAsyncTask(MainActivity activity){
+    public AnswerAsyncTask(CameraActivity activity){
         this.activity = activity;
         this.context = this.activity.getApplicationContext();
     }
