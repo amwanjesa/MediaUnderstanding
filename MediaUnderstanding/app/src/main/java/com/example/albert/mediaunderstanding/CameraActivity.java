@@ -163,34 +163,6 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
         camCondition = false;   // setting camera condition to false also when exit from application
     }
 
-//    public void openCamera(View view) {
-//
-//        // fetching the root directory
-//        root = Environment.getExternalStorageDirectory().toString()
-//                + "/Your_Folder";
-//
-//        // Creating folders for Image
-//        imageFolderPath = root + "/saved_images";
-//        File imagesFolder = new File(imageFolderPath);
-//        imagesFolder.mkdirs();
-//
-//        // Generating file name
-//        SimpleDateFormat s = new SimpleDateFormat("ddMMyyyyhhmmss");
-//        String timeStamp = s.format(new Date());
-//        imageName = timeStamp + ".png";
-//
-//        // Creating image here
-//        File image = new File(imageFolderPath, imageName);
-//
-//        fileUri = Uri.fromFile(image);
-//        imagePath = imageFolderPath + File.separator + imageName;
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-//        startActivityForResult(takePictureIntent,
-//                CAMERA_IMAGE_REQUEST);
-//        askSpeechInput();
-//    }
-
     public void askSpeechInput() {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
@@ -207,8 +179,9 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
 
     public void uploadToFirebase(){
         storageRef = storage.getReference();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String imageName = sdf.format(new Date());
         imageRef = storageRef.child(imageName + ".jpg");
-        StorageReference imagesChildRef = storageRef.child("images/" + imageName + "mountains.jpg");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -243,7 +216,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
                     Toast.makeText(this, result.get(0), Toast.LENGTH_LONG).show();
                     AnswerAsyncTask answerTask = new AnswerAsyncTask(CameraActivity.this);
                     Log.d("url", fireImageUrl);
-                    answerTask.execute("http://145.109.44.162:9999/retrieve/" + result.get(0) + "/" + fireImageUrl);
+                    answerTask.execute(getString(R.string.server_url) + result.get(0) + "/" + fireImageUrl);
                 }
                 break;
             }
