@@ -3,13 +3,12 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
     >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="65px"
-        android:layout_alignBottom="@+id/take_a_pic"
+        android:textSize="20sp"
+        android:layout_centerInParent="true"
         android:textColor="#ffffff"
         android:id="@+id/descr_text"/>
 
@@ -19,7 +18,8 @@
         android:layout_height="60dp"
         android:clickable="true"
         android:onClick="setMain"
-        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/descr_text"
         android:src="@drawable/again" />
 
-</>
+</RelativeLayout>
