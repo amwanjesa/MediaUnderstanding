@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:gravity="center"
     >
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="75px"
+        android:layout_centerInParent="true"
+        android:textSize="26sp"
         android:textColor="#ffffff"
         android:id="@+id/input_text"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="75px"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/input_text"
+        android:textSize="26sp"
         android:textColor="#ffffff"
         android:id="@+id/output_text"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="25px"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/output_text"
+        android:textSize="26sp"
         android:textColor="#ffffff"
         android:id="@+id/correct_text"/>
 
@@ -29,8 +33,9 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:clickable="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/correct_text"
         android:onClick="showDescription"
-        android:layout_gravity="center"
         android:src="@drawable/descr" />
 
-</LinearLayout>
+</RelativeLayout>

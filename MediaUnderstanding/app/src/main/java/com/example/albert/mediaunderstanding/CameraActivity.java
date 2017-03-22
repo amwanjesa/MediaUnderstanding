@@ -366,7 +366,7 @@ public class CameraActivity extends Activity implements SurfaceHolder.Callback {
         this.addContentView(descriptionView, layoutParamsControl);
 
         TextView description_text = (TextView) descriptionView.findViewById(R.id.descr_text);
-        description_text.setText(descr);
+        description_text.setText("Description: " + descr);
     }
 
     public void setMain(View view){
